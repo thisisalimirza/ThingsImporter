@@ -6,7 +6,7 @@ const client = new Anthropic({
 
 export interface Task {
   title: string;
-  when?: string;      // ISO date YYYY-MM-DD or: today, tomorrow, evening, anytime, someday
+  when?: string;      // ISO date YYYY-MM-DD or: today, tomorrow, evening, someday
   subtasks?: string[]; // prerequisite steps (smart breakdown mode)
 }
 
@@ -24,7 +24,7 @@ Return ONLY a JSON array of objects — no explanation, no markdown, no wrapper.
 
 Each object must have:
 - "title": string — the task description (5–15 words, capitalized)
-- "when": string (optional) — YYYY-MM-DD, or: today, tomorrow, evening, anytime, someday
+- "when": string (optional) — YYYY-MM-DD, or: today, tomorrow, evening, someday. Omit entirely if no date is mentioned.
 
 If no tasks are found, return [].
 Today's date is ${today()}.
@@ -37,7 +37,7 @@ Extract all tasks and return ONLY a JSON array of objects — no explanation, no
 
 Each object must have:
 - "title": string — the task description (5–15 words, capitalized)
-- "when": string (optional) — YYYY-MM-DD, or: today, tomorrow, evening, anytime, someday
+- "when": string (optional) — YYYY-MM-DD, or: today, tomorrow, evening, someday. Omit entirely if no date is mentioned.
 
 If no tasks are found, return [].
 Today's date is ${today()}.`;
@@ -52,7 +52,7 @@ Return ONLY a JSON array of objects — no explanation, no markdown, no wrapper.
 
 Each object must have:
 - "title": string — the high-level task (5–15 words, capitalized)
-- "when": string (optional) — YYYY-MM-DD, or: today, tomorrow, evening, anytime, someday
+- "when": string (optional) — YYYY-MM-DD, or: today, tomorrow, evening, someday. Omit entirely if no date is mentioned.
 - "subtasks": string[] (optional) — 2–4 prerequisite steps, each a short imperative phrase
 
 Today's date is ${today()}.

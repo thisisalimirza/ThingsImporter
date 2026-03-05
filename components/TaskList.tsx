@@ -176,7 +176,7 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
       type: "to-do",
       attributes: {
         title,
-        ...(when ? { when } : {}),
+        ...(when && when !== "anytime" ? { when } : {}),
         ...(project.trim() ? { list: project.trim() } : {}),
         ...(subtasks?.length
           ? { "checklist-items": subtasks.map((s) => ({ type: "checklist-item", attributes: { title: s } })) }
