@@ -2,6 +2,11 @@ import { createHmac, timingSafeEqual } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
+  // Dev bypass: set BYPASS_PAYMENT=true in .env.local to skip payment gate
+  if (process.env.BYPASS_PAYMENT === "true") {
+    return NextResponse.json({ valid: true });
+  }
+
   let token: string | undefined;
   try {
     ({ token } = await req.json());

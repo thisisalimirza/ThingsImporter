@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import PhotoCapture from "@/components/PhotoCapture";
 import AudioCapture from "@/components/AudioCapture";
+import TextCapture from "@/components/TextCapture";
 import TaskList from "@/components/TaskList";
 import type { Task } from "@/lib/claude";
 
@@ -34,21 +35,19 @@ function AccessGate({ children }: { children: React.ReactNode }) {
       }
 
       // Returning user: validate stored token
-      const stored = localStorage.getItem("bettertasks_access");
-      if (stored) {
-        try {
-          const res = await fetch("/api/check-access", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token: stored }),
-          });
-          const data = await res.json();
-          if (data.valid) {
-            setStatus("granted");
-            return;
-          }
-        } catch { /* fall through */ }
-      }
+      const stored = localStorage.getItem("bettertasks_access") ?? "dev";
+      try {
+        const res = await fetch("/api/check-access", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: stored }),
+        });
+        const data = await res.json();
+        if (data.valid) {
+          setStatus("granted");
+          return;
+        }
+      } catch { /* fall through */ }
 
       // No valid access — send to landing page
       router.replace("/");
@@ -76,7 +75,7 @@ function AccessGate({ children }: { children: React.ReactNode }) {
 // ── App core ───────────────────────────────────────────────────────────────
 
 type AppState = "capture" | "loading" | "review";
-type InputMode = "photo" | "voice";
+type InputMode = "photo" | "voice" | "text";
 
 function AppCore() {
   const [state, setState] = useState<AppState>("capture");
@@ -85,6 +84,7 @@ function AppCore() {
   const [error, setError] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loadingLabel, setLoadingLabel] = useState("Scanning for tasks…");
+  const [photoSmartBreakdown, setPhotoSmartBreakdown] = useState(false);
 
   const runExtraction = async (body: object, label: string) => {
     setState("loading");
@@ -113,10 +113,21 @@ function AppCore() {
     dataUrl: string
   ) => {
     setImagePreview(dataUrl);
-    runExtraction({ image: base64, mediaType }, "Reading your image…");
+    runExtraction(
+      { image: base64, mediaType, smartBreakdown: photoSmartBreakdown },
+      photoSmartBreakdown ? "Reading image & breaking down tasks…" : "Reading your image…"
+    );
   };
 
   const handleVoiceTranscript = (text: string, smartBreakdown: boolean) => {
+    setImagePreview(null);
+    runExtraction(
+      { text, smartBreakdown },
+      smartBreakdown ? "Breaking down your tasks…" : "Extracting your tasks…"
+    );
+  };
+
+  const handleTextTranscript = (text: string, smartBreakdown: boolean) => {
     setImagePreview(null);
     runExtraction(
       { text, smartBreakdown },
@@ -130,6 +141,38 @@ function AppCore() {
     setError(null);
     setImagePreview(null);
   };
+
+  const tabs: { id: InputMode; label: string; icon: React.ReactNode }[] = [
+    {
+      id: "photo",
+      label: "Scan",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+          <path fillRule="evenodd" d="M1 8a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 8.07 3h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 16.07 6H17a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8Zm13.5 3a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM10 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
+        </svg>
+      ),
+    },
+    {
+      id: "voice",
+      label: "Voice",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+          <path d="M7 4a3 3 0 0 1 6 0v6a3 3 0 1 1-6 0V4Z" />
+          <path d="M5.5 9.643a.75.75 0 0 0-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-1.5v-1.546A6.001 6.001 0 0 0 16 10v-.357a.75.75 0 0 0-1.5 0V10a4.5 4.5 0 0 1-9 0v-.357Z" />
+        </svg>
+      ),
+    },
+    {
+      id: "text",
+      label: "Paste",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+          <path d="M5.433 13.917l1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z" />
+          <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z" />
+        </svg>
+      ),
+    },
+  ];
 
   return (
     <main className="min-h-screen bg-stone-950 text-stone-100 flex flex-col">
@@ -151,41 +194,35 @@ function AppCore() {
         {/* Capture screen */}
         {state === "capture" && (
           <div className="flex flex-col gap-5">
+            {/* Mode switcher — 3 tabs */}
             <div className="animate-fade-up anim-delay-1 flex bg-stone-900 border border-stone-800/80 rounded-xl p-1 gap-1">
-              <button
-                onClick={() => setInputMode("photo")}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  inputMode === "photo"
-                    ? "bg-amber-400 text-stone-950 shadow-sm"
-                    : "text-stone-500 hover:text-stone-300"
-                }`}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                  <path fillRule="evenodd" d="M1 8a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 8.07 3h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 16.07 6H17a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8Zm13.5 3a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM10 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
-                </svg>
-                Scan
-              </button>
-              <button
-                onClick={() => setInputMode("voice")}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  inputMode === "voice"
-                    ? "bg-amber-400 text-stone-950 shadow-sm"
-                    : "text-stone-500 hover:text-stone-300"
-                }`}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                  <path d="M7 4a3 3 0 0 1 6 0v6a3 3 0 1 1-6 0V4Z" />
-                  <path d="M5.5 9.643a.75.75 0 0 0-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-1.5v-1.546A6.001 6.001 0 0 0 16 10v-.357a.75.75 0 0 0-1.5 0V10a4.5 4.5 0 0 1-9 0v-.357Z" />
-                </svg>
-                Voice
-              </button>
+              {tabs.map(({ id, label, icon }) => (
+                <button
+                  key={id}
+                  onClick={() => setInputMode(id)}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    inputMode === id
+                      ? "bg-amber-400 text-stone-950 shadow-sm"
+                      : "text-stone-500 hover:text-stone-300"
+                  }`}
+                >
+                  {icon}
+                  {label}
+                </button>
+              ))}
             </div>
 
             <div className="animate-fade-up anim-delay-2">
               {inputMode === "photo" ? (
-                <PhotoCapture onImageSelected={handleImageSelected} />
-              ) : (
+                <PhotoCapture
+                  onImageSelected={handleImageSelected}
+                  smartBreakdown={photoSmartBreakdown}
+                  onSmartBreakdownChange={setPhotoSmartBreakdown}
+                />
+              ) : inputMode === "voice" ? (
                 <AudioCapture onTranscript={handleVoiceTranscript} />
+              ) : (
+                <TextCapture onTranscript={handleTextTranscript} />
               )}
             </div>
 

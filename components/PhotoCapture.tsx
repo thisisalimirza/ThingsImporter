@@ -1,14 +1,17 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 
 interface PhotoCaptureProps {
   onImageSelected: (base64: string, mediaType: "image/jpeg" | "image/png" | "image/gif" | "image/webp", dataUrl: string) => void;
+  smartBreakdown: boolean;
+  onSmartBreakdownChange: (v: boolean) => void;
 }
 
-export default function PhotoCapture({ onImageSelected }: PhotoCaptureProps) {
+export default function PhotoCapture({ onImageSelected, smartBreakdown, onSmartBreakdownChange }: PhotoCaptureProps) {
   const cameraRef = useRef<HTMLInputElement>(null);
   const uploadRef = useRef<HTMLInputElement>(null);
+  const [pasteHint, setPasteHint] = useState(false);
 
   const handleFile = (file: File) => {
     const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"] as const;
@@ -35,6 +38,33 @@ export default function PhotoCapture({ onImageSelected }: PhotoCaptureProps) {
     e.target.value = "";
   };
 
+  // Listen for paste events anywhere on the page
+  useEffect(() => {
+    const handlePaste = (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      for (const item of Array.from(items)) {
+        if (item.kind === "file" && item.type.startsWith("image/")) {
+          const file = item.getAsFile();
+          if (file) {
+            e.preventDefault();
+            handleFile(file);
+            return;
+          }
+        }
+      }
+    };
+    document.addEventListener("paste", handlePaste);
+    // Flash the paste hint on mount so users know this works
+    setPasteHint(true);
+    const t = setTimeout(() => setPasteHint(false), 2500);
+    return () => {
+      document.removeEventListener("paste", handlePaste);
+      clearTimeout(t);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="flex flex-col gap-3 w-full">
       {/* Hidden inputs */}
@@ -53,6 +83,28 @@ export default function PhotoCapture({ onImageSelected }: PhotoCaptureProps) {
         className="hidden"
         onChange={handleChange}
       />
+
+      {/* Smart Breakdown toggle */}
+      <button
+        onClick={() => onSmartBreakdownChange(!smartBreakdown)}
+        className={`flex items-start gap-3 w-full text-left rounded-2xl px-4 py-4 transition-all border ${
+          smartBreakdown
+            ? "bg-amber-400/8 border-amber-400/30"
+            : "bg-stone-900 border-stone-800/80"
+        }`}
+      >
+        <div className="mt-0.5 flex-shrink-0">
+          <div className={`w-10 h-6 rounded-full flex items-center transition-colors ${smartBreakdown ? "bg-amber-400" : "bg-stone-700"}`}>
+            <div className={`w-4 h-4 rounded-full bg-white mx-1 transition-transform shadow-sm ${smartBreakdown ? "translate-x-4" : "translate-x-0"}`} />
+          </div>
+        </div>
+        <div>
+          <p className={`font-medium text-sm ${smartBreakdown ? "text-amber-300" : "text-stone-200"}`}>Smart Breakdown</p>
+          <p className="text-stone-500 text-xs mt-0.5 leading-relaxed font-light">
+            AI suggests prerequisite steps for big tasks — so you always know the next action
+          </p>
+        </div>
+      </button>
 
       {/* Camera button */}
       <button
@@ -94,6 +146,14 @@ export default function PhotoCapture({ onImageSelected }: PhotoCaptureProps) {
         </svg>
         Choose from Library
       </button>
+
+      {/* Paste hint */}
+      <p className={`text-stone-600 text-sm text-center font-light transition-opacity duration-500 ${pasteHint ? "opacity-100" : "opacity-60"}`}>
+        Or paste a screenshot with{" "}
+        <kbd className="font-mono text-stone-500 bg-stone-800 rounded px-1 py-0.5 text-xs">⌘V</kbd>
+        {" / "}
+        <kbd className="font-mono text-stone-500 bg-stone-800 rounded px-1 py-0.5 text-xs">Ctrl+V</kbd>
+      </p>
     </div>
   );
 }

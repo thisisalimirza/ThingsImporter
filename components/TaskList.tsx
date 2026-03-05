@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { Task } from "@/lib/claude";
 
 type Destination = "things" | "reminders" | "todoist" | "copy";
@@ -117,6 +117,8 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
   const [remindersViaShare, setRemindersViaShare] = useState(false);
   const [copied, setCopied] = useState(false);
   const [exportError, setExportError] = useState("");
+  const [undoTask, setUndoTask] = useState<{ task: Task; index: number } | null>(null);
+  const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Load saved Todoist token
   useEffect(() => {
@@ -126,7 +128,23 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
 
   // ── Task editing ─────────────────────────────────────────────────────────
 
-  const deleteTask = (i: number) => onTasksChange(tasks.filter((_, idx) => idx !== i));
+  const deleteTask = (i: number) => {
+    const removed = tasks[i];
+    onTasksChange(tasks.filter((_, idx) => idx !== i));
+    // Clear any existing undo timer
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+    setUndoTask({ task: removed, index: i });
+    undoTimerRef.current = setTimeout(() => setUndoTask(null), 4000);
+  };
+
+  const handleUndo = () => {
+    if (!undoTask) return;
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+    const restored = [...tasks];
+    restored.splice(undoTask.index, 0, undoTask.task);
+    onTasksChange(restored);
+    setUndoTask(null);
+  };
 
   const clearWhen = (i: number) =>
     onTasksChange(tasks.map((t, idx) => (idx === i ? { ...t, when: undefined } : t)));
@@ -378,7 +396,7 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
   ];
 
   return (
-    <div className="flex flex-col gap-4 animate-fade-up">
+    <div className="flex flex-col gap-4 animate-fade-up relative">
       {/* Header */}
       <div className="flex items-baseline justify-between">
         <h2 className="text-stone-100">
@@ -568,6 +586,19 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
           </button>
         )}
       </div>
+
+      {/* Undo toast */}
+      {undoTask && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-stone-800 border border-stone-700 rounded-2xl px-4 py-3 shadow-2xl animate-fade-up">
+          <span className="text-stone-300 text-sm font-light">Task deleted</span>
+          <button
+            onClick={handleUndo}
+            className="text-amber-400 text-sm font-semibold hover:text-amber-300 transition-colors"
+          >
+            Undo
+          </button>
+        </div>
+      )}
     </div>
   );
 }

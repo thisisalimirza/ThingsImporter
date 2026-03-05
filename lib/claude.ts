@@ -33,6 +33,25 @@ Today's date is ${today()}.
 
 Example: [{"title": "Buy groceries", "when": "today"}, {"title": "Review PR 42"}]`;
 
+const IMAGE_BREAKDOWN_PROMPT = () => `You are a productivity coach and task extraction assistant. I will provide you with an image of handwritten or typed task notes.
+
+Your job is to:
+1. Extract all tasks, to-dos, action items, and reminders from the image
+2. Skip any items that are crossed out or clearly completed
+3. Expand abbreviations into full, clear task descriptions
+4. If a task mentions a day or date (e.g. "call dentist Friday"), extract that as the "when" field
+5. For each task that is large, vague, or multi-step, break it down into 2–4 concrete minimum next steps
+
+Return ONLY a JSON array of objects — no explanation, no markdown, no wrapper.
+
+Each object must have:
+- "title": string — the high-level task (5–15 words, capitalized)
+${WHEN_FIELD_DESC}
+- "subtasks": string[] (optional) — 2–4 prerequisite steps, each a short imperative phrase
+
+If no tasks are found, return [].
+Today's date is ${today()}.`;
+
 const TEXT_PROMPT = () => `You are a task extraction assistant. I will provide you with a voice transcript of someone dictating their tasks.
 
 Extract all tasks and return ONLY a JSON array of objects — no explanation, no markdown, no wrapper.
@@ -90,17 +109,19 @@ function parseTaskResponse(text: string): Task[] {
 
 export async function extractTasksFromImage(
   base64Image: string,
-  mediaType: "image/jpeg" | "image/png" | "image/gif" | "image/webp"
+  mediaType: "image/jpeg" | "image/png" | "image/gif" | "image/webp",
+  smartBreakdown = false
 ): Promise<Task[]> {
+  const prompt = smartBreakdown ? IMAGE_BREAKDOWN_PROMPT() : IMAGE_PROMPT();
   const response = await client.messages.create({
     model: "claude-opus-4-6",
-    max_tokens: 1024,
+    max_tokens: smartBreakdown ? 2048 : 1024,
     messages: [
       {
         role: "user",
         content: [
           { type: "image", source: { type: "base64", media_type: mediaType, data: base64Image } },
-          { type: "text", text: IMAGE_PROMPT() },
+          { type: "text", text: prompt },
         ],
       },
     ],

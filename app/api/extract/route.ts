@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid media type" }, { status: 400 });
     }
 
-    const tasks = await extractTasksFromImage(image, mediaType);
+    const tasks = await extractTasksFromImage(image, mediaType, body.smartBreakdown === true);
     return NextResponse.json({ tasks });
   } catch (err) {
     console.error("Extract route error:", err);
