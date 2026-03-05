@@ -76,7 +76,7 @@ export default function AudioCapture({ onTranscript }: AudioCaptureProps) {
 
   if (!supported) {
     return (
-      <div className="bg-gray-800 rounded-2xl px-4 py-6 text-center text-gray-400 text-sm">
+      <div className="bg-gray-800 border border-gray-700/60 rounded-2xl px-4 py-6 text-center text-gray-500 text-sm">
         Voice input isn&apos;t supported in this browser. Try Safari on iPhone or Chrome.
       </div>
     );
@@ -123,7 +123,7 @@ export default function AudioCapture({ onTranscript }: AudioCaptureProps) {
         className={`flex items-center justify-center gap-3 w-full py-5 rounded-2xl text-white text-xl font-semibold active:scale-95 transition-all ${
           recording
             ? "bg-red-500 shadow-lg shadow-red-500/30"
-            : "bg-blue-500 shadow-lg shadow-blue-500/20"
+            : "bg-indigo-500 shadow-lg shadow-indigo-500/25"
         }`}
       >
         {recording ? (
@@ -149,7 +149,7 @@ export default function AudioCapture({ onTranscript }: AudioCaptureProps) {
 
       {/* Transcript display */}
       {(transcript || interimText) && (
-        <div className="bg-gray-800 rounded-2xl px-4 py-4 min-h-[80px]">
+        <div className="bg-gray-800 border border-gray-700/60 rounded-2xl px-4 py-4 min-h-[80px]">
           <p className="text-sm text-gray-400 mb-2">Transcript</p>
           <p className="text-white text-base leading-relaxed">
             {transcript}
@@ -167,7 +167,7 @@ export default function AudioCapture({ onTranscript }: AudioCaptureProps) {
       {transcript && !recording && (
         <button
           onClick={handleSubmit}
-          className="w-full py-4 bg-blue-500 hover:bg-blue-400 active:scale-95 transition-all text-white text-lg font-semibold rounded-2xl shadow-lg shadow-blue-500/20"
+          className="w-full py-4 bg-indigo-500 hover:bg-indigo-400 active:scale-95 transition-all text-white text-lg font-semibold rounded-2xl shadow-lg shadow-indigo-500/25"
         >
           Extract Tasks
         </button>

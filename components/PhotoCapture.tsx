@@ -57,7 +57,7 @@ export default function PhotoCapture({ onImageSelected }: PhotoCaptureProps) {
       {/* Camera button */}
       <button
         onClick={() => cameraRef.current?.click()}
-        className="flex items-center justify-center gap-3 w-full py-5 bg-blue-500 hover:bg-blue-400 active:scale-95 transition-all text-white text-xl font-semibold rounded-2xl shadow-lg shadow-blue-500/20"
+        className="flex items-center justify-center gap-3 w-full py-5 bg-indigo-500 hover:bg-indigo-400 active:scale-95 transition-all text-white text-xl font-semibold rounded-2xl shadow-lg shadow-indigo-500/25"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -78,7 +78,7 @@ export default function PhotoCapture({ onImageSelected }: PhotoCaptureProps) {
       {/* Upload button */}
       <button
         onClick={() => uploadRef.current?.click()}
-        className="flex items-center justify-center gap-3 w-full py-5 bg-gray-700 hover:bg-gray-600 active:scale-95 transition-all text-white text-xl font-semibold rounded-2xl"
+        className="flex items-center justify-center gap-3 w-full py-5 bg-gray-800 hover:bg-gray-700 border border-gray-700/60 active:scale-95 transition-all text-white text-xl font-semibold rounded-2xl"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

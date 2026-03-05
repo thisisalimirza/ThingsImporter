@@ -70,14 +70,14 @@ export default function Home() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-1.5">
             {/* Logo mark */}
-            <div className="w-9 h-9 bg-blue-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/30">
+            <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-indigo-500/30">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-white">
                 <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clipRule="evenodd" />
               </svg>
             </div>
             <h1 className="text-3xl font-bold tracking-tight">BetterTasks</h1>
           </div>
-          <p className="text-gray-400 text-base pl-0.5">
+          <p className="text-gray-500 text-sm pl-0.5">
             Capture tasks from anywhere. Send them anywhere.
           </p>
         </div>
@@ -86,11 +86,13 @@ export default function Home() {
         {state === "capture" && (
           <div className="flex flex-col gap-6">
             {/* Tab switcher */}
-            <div className="flex bg-gray-800 rounded-2xl p-1">
+            <div className="flex bg-gray-800 border border-gray-700/60 rounded-2xl p-1">
               <button
                 onClick={() => setInputMode("photo")}
                 className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                  inputMode === "photo" ? "bg-gray-600 text-white" : "text-gray-400"
+                  inputMode === "photo"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-500 hover:text-gray-300"
                 }`}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
@@ -101,7 +103,9 @@ export default function Home() {
               <button
                 onClick={() => setInputMode("voice")}
                 className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                  inputMode === "voice" ? "bg-gray-600 text-white" : "text-gray-400"
+                  inputMode === "voice"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-500 hover:text-gray-300"
                 }`}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
@@ -119,13 +123,13 @@ export default function Home() {
             )}
 
             {error && (
-              <div className="bg-red-900/40 border border-red-700 text-red-300 rounded-2xl px-4 py-3 text-sm">
+              <div className="bg-red-900/40 border border-red-700/60 text-red-300 rounded-2xl px-4 py-3 text-sm">
                 {error}
               </div>
             )}
 
             {inputMode === "photo" && (
-              <p className="text-gray-500 text-sm text-center">
+              <p className="text-gray-600 text-sm text-center">
                 Point your camera at any written task list, note, or whiteboard
               </p>
             )}
@@ -136,18 +140,18 @@ export default function Home() {
         {state === "loading" && (
           <div className="flex-1 flex flex-col items-center justify-center gap-6">
             {imagePreview && (
-              <div className="w-32 h-32 rounded-2xl overflow-hidden border-2 border-gray-700">
+              <div className="w-32 h-32 rounded-2xl overflow-hidden border border-gray-700/60 shadow-xl">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={imagePreview} alt="Captured" className="w-full h-full object-cover" />
               </div>
             )}
             <div className="relative w-12 h-12">
-              <div className="absolute inset-0 rounded-full border-4 border-gray-700" />
-              <div className="absolute inset-0 rounded-full border-4 border-blue-400 border-t-transparent animate-spin" />
+              <div className="absolute inset-0 rounded-full border-4 border-gray-700/60" />
+              <div className="absolute inset-0 rounded-full border-4 border-indigo-400 border-t-transparent animate-spin" />
             </div>
             <div className="text-center">
               <p className="text-white font-medium text-lg">Finding tasks…</p>
-              <p className="text-gray-400 text-sm mt-1">{loadingLabel}</p>
+              <p className="text-gray-500 text-sm mt-1">{loadingLabel}</p>
             </div>
           </div>
         )}

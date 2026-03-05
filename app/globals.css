@@ -21,3 +21,21 @@ body {
 * {
   -webkit-tap-highlight-color: transparent;
 }
+
+/* Selection color */
+::selection {
+  background: rgba(99, 102, 241, 0.35);
+  color: white;
+}
+
+/* Slim scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 2px;
+}
