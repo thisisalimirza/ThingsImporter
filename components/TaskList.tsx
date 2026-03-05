@@ -76,7 +76,16 @@ function tasksToText(tasks: Task[]): string {
     .join("\n");
 }
 
-// ── Sub-components ─────────────────────────────────────────────────────────
+// Things 3 only accepts these specific when values (plus ISO dates)
+const VALID_THINGS_WHEN = new Set(["today", "tomorrow", "evening", "anytime", "someday"]);
+function sanitizeWhen(when?: string): string | undefined {
+  if (!when) return undefined;
+  if (VALID_THINGS_WHEN.has(when)) return when;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(when)) return when;
+  return undefined;
+}
+
+
 
 function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
@@ -176,16 +185,27 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
       type: "to-do",
       attributes: {
         title,
-        ...(when ? { when } : {}),
+        ...(sanitizeWhen(when) ? { when: sanitizeWhen(when) } : {}),
         ...(project.trim() ? { list: project.trim() } : {}),
         ...(subtasks?.length
           ? { "checklist-items": subtasks.map((s) => ({ type: "checklist-item", attributes: { title: s } })) }
           : {}),
       },
     }));
-    window.location.href = `things:///json?data=${encodeURIComponent(JSON.stringify(data))}`;
-    setSentTo("things");
-    setSent(true);
+
+    // Use anchor click rather than window.location.href — more reliable for
+    // custom URL schemes in Safari PWA mode; also avoids React re-render
+    // potentially racing with the navigation.
+    const a = document.createElement("a");
+    a.href = `things:///json?data=${encodeURIComponent(JSON.stringify(data))}`;
+    a.click();
+
+    // Delay the success screen so the browser has time to hand off to Things 3
+    // before any DOM updates happen.
+    setTimeout(() => {
+      setSentTo("things");
+      setSent(true);
+    }, 400);
   };
 
   const exportReminders = async () => {
@@ -272,7 +292,10 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
                 ? remindersViaShare ? "Sent to Apple Reminders!" : "File downloaded!"
                 : `${tasks.length} task${tasks.length !== 1 ? "s" : ""} sent!`}
             </p>
-            {totalSubtasks > 0 && !isReminders && (
+            {sentTo === "things" && (
+              <p className="text-gray-400 text-sm mt-0.5">Check your Things 3 Inbox</p>
+            )}
+            {totalSubtasks > 0 && !isReminders && sentTo !== "things" && (
               <p className="text-gray-400 text-sm mt-0.5">with {totalSubtasks} subtask{totalSubtasks !== 1 ? "s" : ""}</p>
             )}
           </div>
