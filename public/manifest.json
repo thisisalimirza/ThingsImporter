@@ -1,7 +1,7 @@
 {
-  "name": "JournalCut",
-  "short_name": "JournalCut",
-  "description": "Photograph your journal, extract tasks, send to Things 3",
+  "name": "BetterTasks",
+  "short_name": "BetterTasks",
+  "description": "Capture tasks from anywhere. Send them anywhere.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#111827",

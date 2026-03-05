@@ -5,13 +5,13 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "JournalCut",
-  description: "Photograph your journal, extract tasks, send to Things 3",
+  title: "BetterTasks",
+  description: "Capture tasks from anywhere. Send them anywhere.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "JournalCut",
+    title: "BetterTasks",
   },
 };
 

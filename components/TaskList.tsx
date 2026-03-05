@@ -46,7 +46,7 @@ function generateICS(tasks: Task[]): string {
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//JournalCut//EN",
+    "PRODID:-//BetterTasks//EN",
     "METHOD:PUBLISH",
     ...vtodos,
     "END:VCALENDAR",
@@ -110,7 +110,7 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
 
   // Load saved Todoist token
   useEffect(() => {
-    const saved = localStorage.getItem("journalcut_todoist_token");
+    const saved = localStorage.getItem("bettertasks_todoist_token");
     if (saved) setTodoistToken(saved);
   }, []);
 
@@ -151,7 +151,7 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
         setTodoistTokenError("That token didn't work. Double-check you copied the whole thing.");
         return;
       }
-      localStorage.setItem("journalcut_todoist_token", t);
+      localStorage.setItem("bettertasks_todoist_token", t);
       setTodoistToken(t);
       setTodoistTokenInput("");
       setShowTodoistSetup(false);
@@ -163,7 +163,7 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
   };
 
   const forgetTodoistToken = () => {
-    localStorage.removeItem("journalcut_todoist_token");
+    localStorage.removeItem("bettertasks_todoist_token");
     setTodoistToken("");
     setShowTodoistSetup(true);
   };
@@ -278,11 +278,48 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
 
   // ── Destination tabs ──────────────────────────────────────────────────────
 
-  const destinations: { id: Destination; label: string }[] = [
-    { id: "things", label: "Things 3" },
-    { id: "reminders", label: "Reminders" },
-    { id: "todoist", label: "Todoist" },
-    { id: "copy", label: "Copy" },
+  const destinations: { id: Destination; label: string; icon: React.ReactNode; color: string }[] = [
+    {
+      id: "things",
+      label: "Things 3",
+      color: "text-blue-400",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+          <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clipRule="evenodd" />
+        </svg>
+      ),
+    },
+    {
+      id: "reminders",
+      label: "Reminders",
+      color: "text-orange-400",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+          <path fillRule="evenodd" d="M4 8a6 6 0 1 1 12 0c0 1.887.454 3.665 1.257 5.234a.75.75 0 0 1-.515 1.076 32.91 32.91 0 0 1-3.256.508 3.5 3.5 0 0 1-6.972 0 32.903 32.903 0 0 1-3.256-.508.75.75 0 0 1-.515-1.076A11.448 11.448 0 0 0 4 8Zm6 7c-.655 0-1.305-.02-1.95-.057a2 2 0 0 0 3.9 0c-.645.038-1.295.057-1.95.057Z" clipRule="evenodd" />
+        </svg>
+      ),
+    },
+    {
+      id: "todoist",
+      label: "Todoist",
+      color: "text-red-400",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+          <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clipRule="evenodd" />
+        </svg>
+      ),
+    },
+    {
+      id: "copy",
+      label: "Copy",
+      color: "text-green-400",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+          <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
+          <path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" />
+        </svg>
+      ),
+    },
   ];
 
   return (
@@ -355,17 +392,20 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
 
       {/* ── Destination picker ── */}
       <div className="mt-2 flex flex-col gap-3">
-        <p className="text-xs text-gray-400 uppercase tracking-wider font-medium pl-1">Send to</p>
+        <p className="text-xs text-gray-500 uppercase tracking-wider font-medium pl-1">Send to</p>
 
         <div className="grid grid-cols-4 gap-2">
-          {destinations.map(({ id, label }) => (
+          {destinations.map(({ id, label, icon, color }) => (
             <button
               key={id}
               onClick={() => { setDestination(id); setExportError(""); }}
-              className={`py-2.5 rounded-xl text-sm font-medium transition-all ${
-                destination === id ? "bg-blue-500 text-white" : "bg-gray-800 text-gray-400"
+              className={`flex flex-col items-center gap-1.5 py-3 rounded-xl text-xs font-medium transition-all ${
+                destination === id
+                  ? "bg-gray-700 ring-2 ring-blue-500 text-white"
+                  : "bg-gray-800 text-gray-500"
               }`}
             >
+              <span className={destination === id ? color : ""}>{icon}</span>
               {label}
             </button>
           ))}
