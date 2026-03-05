@@ -36,7 +36,7 @@ export default function PhotoCapture({ onImageSelected }: PhotoCaptureProps) {
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full">
+    <div className="flex flex-col gap-3 w-full">
       {/* Hidden inputs */}
       <input
         ref={cameraRef}
@@ -57,13 +57,13 @@ export default function PhotoCapture({ onImageSelected }: PhotoCaptureProps) {
       {/* Camera button */}
       <button
         onClick={() => cameraRef.current?.click()}
-        className="flex items-center justify-center gap-3 w-full py-5 bg-blue-500 hover:bg-blue-400 active:scale-95 transition-all text-white text-xl font-semibold rounded-2xl shadow-lg shadow-blue-500/20"
+        className="btn-amber flex items-center justify-center gap-3 w-full py-5 bg-amber-400 hover:bg-amber-300 text-stone-950 text-xl font-semibold rounded-2xl shadow-lg shadow-amber-400/10"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
           fill="currentColor"
-          className="w-7 h-7"
+          className="w-6 h-6"
         >
           <path d="M12 9a3.75 3.75 0 1 0 0 7.5A3.75 3.75 0 0 0 12 9Z" />
           <path
@@ -78,13 +78,13 @@ export default function PhotoCapture({ onImageSelected }: PhotoCaptureProps) {
       {/* Upload button */}
       <button
         onClick={() => uploadRef.current?.click()}
-        className="flex items-center justify-center gap-3 w-full py-5 bg-gray-700 hover:bg-gray-600 active:scale-95 transition-all text-white text-xl font-semibold rounded-2xl"
+        className="flex items-center justify-center gap-3 w-full py-5 bg-stone-900 hover:bg-stone-800 border border-stone-800/80 active:scale-[0.98] transition-all text-stone-300 text-xl font-semibold rounded-2xl"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
           fill="currentColor"
-          className="w-7 h-7"
+          className="w-6 h-6 text-stone-500"
         >
           <path
             fillRule="evenodd"

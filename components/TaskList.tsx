@@ -90,10 +90,10 @@ function sanitizeWhen(when?: string): string | undefined {
 function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
     <div className="flex gap-3 items-start">
-      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-600 text-white text-xs font-bold flex items-center justify-center mt-0.5">
+      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-stone-800 ring-1 ring-stone-700 text-stone-400 text-xs font-bold flex items-center justify-center mt-0.5">
         {n}
       </span>
-      <p className="text-gray-300 text-sm leading-relaxed">{children}</p>
+      <p className="text-stone-500 text-sm leading-relaxed font-light">{children}</p>
     </div>
   );
 }
@@ -279,39 +279,39 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
   if (sent) {
     const isReminders = sentTo === "reminders";
     return (
-      <div className="flex flex-col gap-6 py-4">
+      <div className="flex flex-col gap-6 py-4 animate-fade-up">
         <div className="flex flex-col items-center gap-4 text-center">
-          <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 text-green-400">
+          <div className="w-16 h-16 rounded-full bg-amber-400/10 ring-1 ring-amber-400/30 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 text-amber-400">
               <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
             </svg>
           </div>
           <div>
-            <p className="text-white text-xl font-semibold">
+            <p className="font-display italic text-2xl text-stone-50">
               {isReminders
-                ? remindersViaShare ? "Sent to Apple Reminders!" : "File downloaded!"
+                ? remindersViaShare ? "Sent to Reminders!" : "File downloaded!"
                 : `${tasks.length} task${tasks.length !== 1 ? "s" : ""} sent!`}
             </p>
             {sentTo === "things" && (
-              <p className="text-gray-400 text-sm mt-0.5">Check your Things 3 Inbox</p>
+              <p className="text-stone-500 text-sm mt-1 font-light">Check your Things 3 Inbox</p>
             )}
             {totalSubtasks > 0 && !isReminders && sentTo !== "things" && (
-              <p className="text-gray-400 text-sm mt-0.5">with {totalSubtasks} subtask{totalSubtasks !== 1 ? "s" : ""}</p>
+              <p className="text-stone-500 text-sm mt-1 font-light">with {totalSubtasks} subtask{totalSubtasks !== 1 ? "s" : ""}</p>
             )}
           </div>
         </div>
 
         {/* Apple Reminders post-export instructions */}
         {isReminders && !remindersViaShare && (
-          <div className="bg-gray-800 rounded-2xl p-4 flex flex-col gap-3">
-            <p className="text-white font-semibold text-sm">Now import into Apple Reminders:</p>
-            <Step n={1}>Find the downloaded file — open your <strong className="text-white">Files app</strong> and look in the <strong className="text-white">Downloads</strong> folder for <strong className="text-white">tasks.ics</strong></Step>
-            <Step n={2}>Tap the file. Your iPhone will ask <strong className="text-white">&ldquo;Add to Reminders?&rdquo;</strong> — tap <strong className="text-white">Add</strong></Step>
-            <Step n={3}>Done! Open <strong className="text-white">Apple Reminders</strong> and your tasks will be there.</Step>
+          <div className="bg-stone-900 border border-stone-800/80 rounded-2xl p-4 flex flex-col gap-3">
+            <p className="text-stone-200 font-medium text-sm">Now import into Apple Reminders:</p>
+            <Step n={1}>Find the downloaded file — open your <strong className="text-stone-200">Files app</strong> and look in the <strong className="text-stone-200">Downloads</strong> folder for <strong className="text-stone-200">tasks.ics</strong></Step>
+            <Step n={2}>Tap the file. Your iPhone will ask <strong className="text-stone-200">&ldquo;Add to Reminders?&rdquo;</strong> — tap <strong className="text-stone-200">Add</strong></Step>
+            <Step n={3}>Done! Open <strong className="text-stone-200">Apple Reminders</strong> and your tasks will be there.</Step>
           </div>
         )}
 
-        <button onClick={onReset} className="w-full py-3 bg-gray-700 hover:bg-gray-600 active:scale-95 transition-all text-white font-medium rounded-2xl">
+        <button onClick={onReset} className="w-full py-3 bg-stone-900 hover:bg-stone-800 border border-stone-800/80 active:scale-[0.98] transition-all text-stone-300 font-medium rounded-2xl">
           Scan Another
         </button>
       </div>
@@ -320,20 +320,21 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
 
   if (tasks.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-400 text-lg mb-6">No tasks found.</p>
-        <button onClick={onReset} className="px-6 py-3 bg-gray-700 text-white rounded-2xl font-medium active:scale-95 transition-transform">Try Again</button>
+      <div className="text-center py-12 animate-fade-up">
+        <p className="text-stone-500 text-lg mb-6 font-light">No tasks found.</p>
+        <button onClick={onReset} className="px-6 py-3 bg-stone-900 hover:bg-stone-800 border border-stone-800/80 text-stone-300 rounded-2xl font-medium active:scale-[0.98] transition-all">Try Again</button>
       </div>
     );
   }
 
   // ── Destination tabs ──────────────────────────────────────────────────────
 
-  const destinations: { id: Destination; label: string; icon: React.ReactNode; color: string }[] = [
+  const destinations: { id: Destination; label: string; icon: React.ReactNode; color: string; ring: string }[] = [
     {
       id: "things",
       label: "Things 3",
       color: "text-blue-400",
+      ring: "ring-blue-400",
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
           <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clipRule="evenodd" />
@@ -344,6 +345,7 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
       id: "reminders",
       label: "Reminders",
       color: "text-orange-400",
+      ring: "ring-orange-400",
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
           <path fillRule="evenodd" d="M4 8a6 6 0 1 1 12 0c0 1.887.454 3.665 1.257 5.234a.75.75 0 0 1-.515 1.076 32.91 32.91 0 0 1-3.256.508 3.5 3.5 0 0 1-6.972 0 32.903 32.903 0 0 1-3.256-.508.75.75 0 0 1-.515-1.076A11.448 11.448 0 0 0 4 8Zm6 7c-.655 0-1.305-.02-1.95-.057a2 2 0 0 0 3.9 0c-.645.038-1.295.057-1.95.057Z" clipRule="evenodd" />
@@ -354,6 +356,7 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
       id: "todoist",
       label: "Todoist",
       color: "text-red-400",
+      ring: "ring-red-400",
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
           <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clipRule="evenodd" />
@@ -364,6 +367,7 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
       id: "copy",
       label: "Copy",
       color: "text-green-400",
+      ring: "ring-green-400",
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
           <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
@@ -374,54 +378,55 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
   ];
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 animate-fade-up">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-white">
-          {tasks.length} task{tasks.length !== 1 ? "s" : ""} found
+      <div className="flex items-baseline justify-between">
+        <h2 className="text-stone-100">
+          <span className="font-display italic text-2xl text-amber-400">{tasks.length}</span>
+          <span className="text-sm font-medium ml-1.5 text-stone-500">task{tasks.length !== 1 ? "s" : ""} found</span>
         </h2>
-        <button onClick={onReset} className="text-sm text-gray-400 underline underline-offset-2">Start over</button>
+        <button onClick={onReset} className="text-sm text-stone-600 hover:text-stone-400 transition-colors font-light">Start over</button>
       </div>
 
       {/* Task list */}
       <ul className="flex flex-col gap-2">
         {tasks.map((task, i) => (
-          <li key={i} className="flex flex-col bg-gray-800 rounded-2xl px-4 py-3 gap-2">
+          <li key={i} className="flex flex-col bg-stone-900 border border-stone-800/70 rounded-xl px-4 py-3.5 gap-2 hover:border-stone-700/80 transition-colors">
             <div className="flex items-center gap-3">
-              <span className="w-2 h-2 rounded-full bg-blue-400 flex-shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400/70 flex-shrink-0" />
               {editingIndex === i ? (
-                <input autoFocus className="flex-1 bg-transparent text-white text-base outline-none border-b border-blue-400" value={editValue}
+                <input autoFocus className="flex-1 bg-transparent text-stone-100 text-base outline-none border-b border-amber-400/60" value={editValue}
                   onChange={(e) => setEditValue(e.target.value)}
                   onBlur={() => commitEdit(i)}
                   onKeyDown={(e) => { if (e.key === "Enter") commitEdit(i); if (e.key === "Escape") { setEditingIndex(null); setEditValue(""); } }} />
               ) : (
-                <span className="flex-1 text-white text-base cursor-pointer" onClick={() => startEdit(i)}>{task.title}</span>
+                <span className="flex-1 text-stone-100 text-base cursor-pointer" onClick={() => startEdit(i)}>{task.title}</span>
               )}
-              <button onClick={() => deleteTask(i)} className="text-gray-500 hover:text-red-400 transition-colors text-xl leading-none flex-shrink-0" aria-label="Delete">×</button>
+              <button onClick={() => deleteTask(i)} className="text-stone-700 hover:text-red-400 transition-colors text-xl leading-none flex-shrink-0" aria-label="Delete">×</button>
             </div>
 
             {task.when && (
-              <div className="flex items-center pl-5">
-                <span className="flex items-center gap-1 bg-gray-700 text-gray-300 text-xs rounded-full px-2 py-0.5">
+              <div className="flex items-center pl-4">
+                <span className="flex items-center gap-1 bg-stone-800 text-amber-400/80 text-xs rounded-full px-2 py-0.5">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3">
                     <path fillRule="evenodd" d="M4.75 1a.75.75 0 0 1 .75.75V3h5V1.75a.75.75 0 0 1 1.5 0V3h.25A2.75 2.75 0 0 1 15 5.75v7.5A2.75 2.75 0 0 1 12.25 16H3.75A2.75 2.75 0 0 1 1 13.25v-7.5A2.75 2.75 0 0 1 3.75 3H4V1.75A.75.75 0 0 1 4.75 1Zm-1 5.5A.25.25 0 0 0 3.5 6.75v6.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-6.5a.25.25 0 0 0-.25-.25H3.75Z" clipRule="evenodd" />
                   </svg>
                   {formatWhen(task.when)}
-                  <button onClick={() => clearWhen(i)} className="ml-0.5 text-gray-500 hover:text-gray-300" aria-label="Clear date">×</button>
+                  <button onClick={() => clearWhen(i)} className="ml-0.5 text-amber-400/40 hover:text-amber-400/80" aria-label="Clear date">×</button>
                 </span>
               </div>
             )}
 
             {task.subtasks && task.subtasks.length > 0 && (
-              <div className="pl-5 flex flex-col gap-1.5 mt-1">
-                <p className="text-xs text-purple-400 font-medium uppercase tracking-wide">Next steps</p>
+              <div className="pl-4 flex flex-col gap-1.5 mt-0.5">
+                <p className="text-xs text-amber-400/60 font-medium uppercase tracking-wide">Next steps</p>
                 {task.subtasks.map((sub, si) => (
                   <div key={si} className="flex items-start gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5 text-gray-500 mt-0.5 flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5 text-stone-600 mt-0.5 flex-shrink-0">
                       <path fillRule="evenodd" d="M2.75 3.5a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5H2.75Zm0 4a.75.75 0 0 0 0 1.5h5.5a.75.75 0 0 0 0-1.5h-5.5Zm0 4a.75.75 0 0 0 0 1.5h3.5a.75.75 0 0 0 0-1.5h-3.5Z" clipRule="evenodd" />
                     </svg>
-                    <span className="flex-1 text-gray-300 text-sm leading-snug">{sub}</span>
-                    <button onClick={() => deleteSubtask(i, si)} className="text-gray-600 hover:text-red-400 transition-colors text-base leading-none flex-shrink-0 mt-0.5" aria-label="Remove step">×</button>
+                    <span className="flex-1 text-stone-400 text-sm leading-snug font-light">{sub}</span>
+                    <button onClick={() => deleteSubtask(i, si)} className="text-stone-700 hover:text-red-400 transition-colors text-base leading-none flex-shrink-0 mt-0.5" aria-label="Remove step">×</button>
                   </div>
                 ))}
               </div>
@@ -432,28 +437,28 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
 
       {/* Add task */}
       {adding && (
-        <div className="flex items-center gap-3 bg-gray-800 rounded-2xl px-4 py-3">
-          <span className="w-2 h-2 rounded-full bg-blue-400 flex-shrink-0" />
-          <input autoFocus className="flex-1 bg-transparent text-white text-base outline-none border-b border-blue-400" placeholder="New task..."
+        <div className="flex items-center gap-3 bg-stone-900 border border-stone-800/70 rounded-xl px-4 py-3.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400/70 flex-shrink-0" />
+          <input autoFocus className="flex-1 bg-transparent text-stone-100 text-base outline-none border-b border-amber-400/60" placeholder="New task..."
             onBlur={(e) => { if (e.target.value.trim()) onTasksChange([...tasks, { title: e.target.value.trim() }]); setAdding(false); }}
             onKeyDown={(e) => { if (e.key === "Enter") { const v = (e.target as HTMLInputElement).value.trim(); if (v) onTasksChange([...tasks, { title: v }]); setAdding(false); } if (e.key === "Escape") setAdding(false); }} />
         </div>
       )}
-      <button onClick={() => setAdding(true)} className="text-sm text-gray-400 text-left pl-2">+ Add task</button>
+      <button onClick={() => setAdding(true)} className="text-sm text-stone-600 hover:text-stone-400 transition-colors text-left pl-1 font-light">+ Add task</button>
 
       {/* ── Destination picker ── */}
-      <div className="mt-2 flex flex-col gap-3">
-        <p className="text-xs text-gray-500 uppercase tracking-wider font-medium pl-1">Send to</p>
+      <div className="mt-1 flex flex-col gap-3">
+        <p className="text-xs text-stone-600 uppercase tracking-wider font-medium pl-0.5">Send to</p>
 
         <div className="grid grid-cols-4 gap-2">
-          {destinations.map(({ id, label, icon, color }) => (
+          {destinations.map(({ id, label, icon, color, ring }) => (
             <button
               key={id}
               onClick={() => { setDestination(id); setExportError(""); }}
               className={`flex flex-col items-center gap-1.5 py-3 rounded-xl text-xs font-medium transition-all ${
                 destination === id
-                  ? "bg-gray-700 ring-2 ring-blue-500 text-white"
-                  : "bg-gray-800 text-gray-500"
+                  ? `bg-stone-800 ring-2 ${ring} text-stone-100`
+                  : "bg-stone-900 border border-stone-800/60 text-stone-600 hover:text-stone-400 hover:border-stone-700"
               }`}
             >
               <span className={destination === id ? color : ""}>{icon}</span>
@@ -464,22 +469,22 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
 
         {/* Things 3 — project picker */}
         {destination === "things" && (
-          <div className="flex items-center gap-3 bg-gray-800 rounded-2xl px-4 py-3">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-gray-400 flex-shrink-0">
+          <div className="flex items-center gap-3 bg-stone-900 border border-stone-800/80 rounded-xl px-4 py-3">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-stone-600 flex-shrink-0">
               <path d="M19.5 21a3 3 0 0 0 3-3v-4.5a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3V18a3 3 0 0 0 3 3h15ZM1.5 10.146V6a3 3 0 0 1 3-3h5.379a2.25 2.25 0 0 1 1.59.659l2.122 2.121c.14.141.331.22.53.22H19.5a3 3 0 0 1 3 3v1.146A4.483 4.483 0 0 0 19.5 9h-15a4.483 4.483 0 0 0-3 1.146Z" />
             </svg>
             <input type="text" placeholder="Project or area (optional)" value={project} onChange={(e) => setProject(e.target.value)}
-              className="flex-1 bg-transparent text-white text-sm outline-none placeholder:text-gray-500" />
+              className="flex-1 bg-transparent text-stone-200 text-sm outline-none placeholder:text-stone-600 font-light" />
           </div>
         )}
 
         {/* Apple Reminders — info */}
         {destination === "reminders" && (
-          <div className="bg-gray-800 rounded-2xl p-4 flex flex-col gap-3">
-            <p className="text-white text-sm font-semibold">Sends to Apple Reminders</p>
-            <Step n={1}>Tap <strong className="text-white">&ldquo;Send to Apple Reminders&rdquo;</strong> below</Step>
-            <Step n={2}><strong className="text-white">On iPhone:</strong> your share sheet opens — scroll down and tap <strong className="text-white">Reminders</strong> (the red icon). If you don&rsquo;t see it, tap <strong className="text-white">More</strong> first.</Step>
-            <Step n={3}><strong className="text-white">On desktop:</strong> a <strong className="text-white">tasks.ics</strong> file will download — open it and your calendar or tasks app will offer to import it.</Step>
+          <div className="bg-stone-900 border border-stone-800/80 rounded-xl p-4 flex flex-col gap-3">
+            <p className="text-stone-200 text-sm font-medium">Sends to Apple Reminders</p>
+            <Step n={1}>Tap <strong className="text-stone-200 font-medium">&ldquo;Send to Apple Reminders&rdquo;</strong> below</Step>
+            <Step n={2}><strong className="text-stone-200 font-medium">On iPhone:</strong> your share sheet opens — scroll down and tap <strong className="text-stone-200 font-medium">Reminders</strong> (the red icon). If you don&rsquo;t see it, tap <strong className="text-stone-200 font-medium">More</strong> first.</Step>
+            <Step n={3}><strong className="text-stone-200 font-medium">On desktop:</strong> a <strong className="text-stone-200 font-medium">tasks.ics</strong> file will download — open it and your calendar or tasks app will offer to import it.</Step>
           </div>
         )}
 
@@ -487,23 +492,23 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
         {destination === "todoist" && (
           <div className="flex flex-col gap-3">
             {todoistToken && !showTodoistSetup ? (
-              <div className="flex items-center justify-between bg-gray-800 rounded-2xl px-4 py-3">
+              <div className="flex items-center justify-between bg-stone-900 border border-stone-800/80 rounded-xl px-4 py-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-green-400" />
-                  <span className="text-sm text-gray-300">Todoist connected</span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                  <span className="text-sm text-stone-400 font-light">Todoist connected</span>
                 </div>
-                <button onClick={forgetTodoistToken} className="text-xs text-gray-500 underline">Change</button>
+                <button onClick={forgetTodoistToken} className="text-xs text-stone-600 hover:text-stone-400 transition-colors underline">Change</button>
               </div>
             ) : (
-              <div className="bg-gray-800 rounded-2xl p-4 flex flex-col gap-4">
+              <div className="bg-stone-900 border border-stone-800/80 rounded-xl p-4 flex flex-col gap-4">
                 <div>
-                  <p className="text-white text-sm font-semibold mb-3">Connect your Todoist account</p>
+                  <p className="text-stone-200 text-sm font-medium mb-3">Connect your Todoist account</p>
                   <div className="flex flex-col gap-3">
-                    <Step n={1}>Open <strong className="text-white">todoist.com</strong> in another tab (or the Todoist app)</Step>
-                    <Step n={2}>Click your <strong className="text-white">profile picture</strong> in the top-right corner</Step>
-                    <Step n={3}>Click <strong className="text-white">Settings</strong></Step>
-                    <Step n={4}>Click <strong className="text-white">Integrations</strong> in the left menu, then scroll to the bottom</Step>
-                    <Step n={5}>You&rsquo;ll see <strong className="text-white">&ldquo;API token&rdquo;</strong> — click <strong className="text-white">Copy to clipboard</strong></Step>
+                    <Step n={1}>Open <strong className="text-stone-200 font-medium">todoist.com</strong> in another tab (or the Todoist app)</Step>
+                    <Step n={2}>Click your <strong className="text-stone-200 font-medium">profile picture</strong> in the top-right corner</Step>
+                    <Step n={3}>Click <strong className="text-stone-200 font-medium">Settings</strong></Step>
+                    <Step n={4}>Click <strong className="text-stone-200 font-medium">Integrations</strong> in the left menu, then scroll to the bottom</Step>
+                    <Step n={5}>You&rsquo;ll see <strong className="text-stone-200 font-medium">&ldquo;API token&rdquo;</strong> — click <strong className="text-stone-200 font-medium">Copy to clipboard</strong></Step>
                     <Step n={6}>Come back here and paste it below 👇</Step>
                   </div>
                 </div>
@@ -514,15 +519,15 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
                     placeholder="Paste your Todoist API token here"
                     value={todoistTokenInput}
                     onChange={(e) => { setTodoistTokenInput(e.target.value); setTodoistTokenError(""); }}
-                    className="w-full bg-gray-700 text-white text-sm rounded-xl px-4 py-3 outline-none placeholder:text-gray-500 font-mono"
+                    className="w-full bg-stone-950 border border-stone-800 text-stone-200 text-sm rounded-xl px-4 py-3 outline-none placeholder:text-stone-700 font-mono focus:border-amber-400/40 transition-colors"
                   />
                   {todoistTokenError && (
-                    <p className="text-red-400 text-xs px-1">{todoistTokenError}</p>
+                    <p className="text-red-400 text-xs px-1 font-light">{todoistTokenError}</p>
                   )}
                   <button
                     onClick={saveTodoistToken}
                     disabled={!todoistTokenInput.trim() || todoistVerifying}
-                    className="w-full py-3 bg-blue-500 disabled:bg-gray-600 disabled:text-gray-400 text-white font-medium rounded-xl text-sm transition-colors"
+                    className="btn-amber w-full py-3 bg-amber-400 disabled:bg-stone-800 disabled:text-stone-600 hover:bg-amber-300 text-stone-950 font-medium rounded-xl text-sm"
                   >
                     {todoistVerifying ? "Checking…" : "Save & Connect"}
                   </button>
@@ -534,25 +539,25 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
 
         {/* Copy — no extra UI needed */}
         {destination === "copy" && (
-          <p className="text-gray-500 text-sm pl-1">Copies a plain-text task list to your clipboard — paste anywhere.</p>
+          <p className="text-stone-600 text-sm pl-0.5 font-light">Copies a plain-text task list to your clipboard — paste anywhere.</p>
         )}
 
         {exportError && (
-          <div className="bg-red-900/40 border border-red-700 text-red-300 rounded-2xl px-4 py-3 text-sm">
+          <div className="bg-red-950/60 border border-red-800/60 text-red-300 rounded-xl px-4 py-3 text-sm">
             {exportError}
           </div>
         )}
 
         {/* Export button */}
         {destination === "copy" ? (
-          <button onClick={exportCopy} className="w-full py-4 bg-blue-500 hover:bg-blue-400 active:scale-95 transition-all text-white text-lg font-semibold rounded-2xl shadow-lg shadow-blue-500/20">
+          <button onClick={exportCopy} className="btn-amber w-full py-4 bg-amber-400 hover:bg-amber-300 text-stone-950 text-lg font-semibold rounded-2xl shadow-lg shadow-amber-400/10">
             {copied ? "Copied!" : "Copy to Clipboard"}
           </button>
         ) : (
           <button
             onClick={handleExport}
             disabled={exporting || (destination === "todoist" && !todoistToken)}
-            className="w-full py-4 bg-blue-500 disabled:bg-gray-600 disabled:text-gray-400 hover:bg-blue-400 active:scale-95 transition-all text-white text-lg font-semibold rounded-2xl shadow-lg shadow-blue-500/20"
+            className="btn-amber w-full py-4 bg-amber-400 disabled:bg-stone-800 disabled:text-stone-600 hover:bg-amber-300 text-stone-950 text-lg font-semibold rounded-2xl shadow-lg shadow-amber-400/10"
           >
             {exporting ? "Sending…" : {
               things: "Add All to Things 3",
