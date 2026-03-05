@@ -145,25 +145,97 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Works with ──────────────────────────────────────────────────── */}
+      {/* ── App mockups ─────────────────────────────────────────────────── */}
       <section className="relative z-10 max-w-4xl mx-auto px-6 pb-28">
-        <p className="text-xs text-stone-400 uppercase tracking-widest font-medium text-center mb-6">
-          Works with
+
+        <p className="text-xs text-stone-400 uppercase tracking-widest font-medium text-center mb-8">
+          Tasks land exactly where you work
         </p>
-        <div className="flex items-center justify-center gap-3 flex-wrap">
-          {[
-            { label: "Things 3",        color: "text-blue-500",   ring: "ring-blue-200"   },
-            { label: "Apple Reminders", color: "text-orange-500", ring: "ring-orange-200" },
-            { label: "Todoist",         color: "text-red-500",    ring: "ring-red-200"    },
-            { label: "Clipboard",       color: "text-green-600",  ring: "ring-green-200"  },
-          ].map(({ label, color, ring }) => (
-            <span
-              key={label}
-              className={`inline-flex items-center gap-1.5 bg-white ring-1 ${ring} px-4 py-2 rounded-full text-sm font-medium ${color}`}
-            >
-              {label}
-            </span>
-          ))}
+
+        <div className="grid sm:grid-cols-3 gap-5">
+
+          {/* ── Things 3 ── */}
+          <div className="rounded-2xl overflow-hidden border border-stone-200 shadow-sm">
+            {/* Title bar */}
+            <div className="flex items-center gap-2.5 px-4 py-3" style={{ background: "#1C2033" }}>
+              {/* Things 3 icon: blue circle with check */}
+              <div className="w-6 h-6 rounded-[6px] flex items-center justify-center flex-shrink-0" style={{ background: "#2F86FA" }}>
+                <svg viewBox="0 0 14 14" fill="none" className="w-3.5 h-3.5">
+                  <path d="M2.5 7.5L5.5 10.5L11.5 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <span className="text-white/90 text-xs font-medium tracking-wide">Things 3 · Inbox</span>
+            </div>
+            {/* Task rows */}
+            <div className="bg-white divide-y divide-stone-100">
+              {[
+                "Send project proposal to client",
+                "Review the contract draft",
+                "Schedule follow-up with team",
+              ].map((task) => (
+                <div key={task} className="flex items-center gap-3 px-4 py-2.5">
+                  <div className="w-4 h-4 rounded-full border-2 flex-shrink-0" style={{ borderColor: "#2F86FA" }} />
+                  <span className="text-stone-700 text-xs">{task}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Apple Reminders ── */}
+          <div className="rounded-2xl overflow-hidden border border-stone-200 shadow-sm">
+            {/* Title bar */}
+            <div className="flex items-center gap-2.5 px-4 py-3 bg-white border-b border-stone-100">
+              {/* Reminders icon: orange gradient circle */}
+              <div className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center"
+                style={{ background: "linear-gradient(135deg, #FF9500 0%, #FF6B00 100%)" }}>
+                <svg viewBox="0 0 14 14" fill="none" className="w-3 h-3">
+                  <circle cx="7" cy="7" r="4" stroke="white" strokeWidth="2"/>
+                </svg>
+              </div>
+              <span className="text-stone-800 text-xs font-semibold">Reminders</span>
+            </div>
+            {/* Task rows */}
+            <div className="bg-white divide-y divide-stone-100">
+              {[
+                "Renew car registration",
+                "Order birthday gift for Dad",
+                "Fix the leaky faucet",
+              ].map((task) => (
+                <div key={task} className="flex items-center gap-3 px-4 py-2.5">
+                  <div className="w-4 h-4 rounded-full border-2 border-stone-300 flex-shrink-0" />
+                  <span className="text-stone-700 text-xs">{task}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Todoist ── */}
+          <div className="rounded-2xl overflow-hidden border border-stone-200 shadow-sm">
+            {/* Title bar */}
+            <div className="flex items-center gap-2.5 px-4 py-3" style={{ background: "#DB4035" }}>
+              {/* Todoist icon */}
+              <div className="w-6 h-6 rounded-[6px] flex items-center justify-center flex-shrink-0" style={{ background: "rgba(255,255,255,0.2)" }}>
+                <svg viewBox="0 0 14 14" fill="none" className="w-3.5 h-3.5">
+                  <path d="M2 4h10M2 7h7M2 10h5" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <span className="text-white/90 text-xs font-medium tracking-wide">Todoist · Inbox</span>
+            </div>
+            {/* Task rows */}
+            <div className="bg-white divide-y divide-stone-100">
+              {[
+                "Pick up groceries",
+                "Call the insurance company",
+                "Plan the weekend trip",
+              ].map((task) => (
+                <div key={task} className="flex items-center gap-3 px-4 py-2.5">
+                  <div className="w-4 h-4 rounded-full border-2 border-stone-300 flex-shrink-0" />
+                  <span className="text-stone-700 text-xs">{task}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
       </section>
 
