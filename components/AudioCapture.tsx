@@ -6,10 +6,6 @@ interface AudioCaptureProps {
   onTranscript: (text: string, smartBreakdown: boolean) => void;
 }
 
-// Web Speech API isn't in all TS DOM libs — cast via any at call sites
-type SpeechRecognitionCtor = new () => SpeechRecognition;
-
-
 export default function AudioCapture({ onTranscript }: AudioCaptureProps) {
   const [supported, setSupported] = useState(true);
   const [recording, setRecording] = useState(false);
@@ -22,7 +18,8 @@ export default function AudioCapture({ onTranscript }: AudioCaptureProps) {
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const w = window as any;
-    const SR: SpeechRecognitionCtor | undefined = w.SpeechRecognition ?? w.webkitSpeechRecognition;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const SR: any = w.SpeechRecognition ?? w.webkitSpeechRecognition;
     if (!SR) {
       setSupported(false);
       return;
