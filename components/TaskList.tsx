@@ -67,8 +67,8 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
         ...(project.trim() ? { list: project.trim() } : {}),
         ...(subtasks && subtasks.length > 0
           ? {
-              "check-items": subtasks.map((s) => ({
-                type: "check-item",
+              "checklist-items": subtasks.map((s) => ({
+                type: "checklist-item",
                 attributes: { title: s },
               })),
             }
