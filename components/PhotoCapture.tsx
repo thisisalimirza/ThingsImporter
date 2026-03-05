@@ -3,7 +3,7 @@
 import { useRef } from "react";
 
 interface PhotoCaptureProps {
-  onImageSelected: (base64: string, mediaType: "image/jpeg" | "image/png" | "image/gif" | "image/webp") => void;
+  onImageSelected: (base64: string, mediaType: "image/jpeg" | "image/png" | "image/gif" | "image/webp", dataUrl: string) => void;
 }
 
 export default function PhotoCapture({ onImageSelected }: PhotoCaptureProps) {
@@ -23,7 +23,7 @@ export default function PhotoCapture({ onImageSelected }: PhotoCaptureProps) {
       const result = e.target?.result as string;
       // Strip the data URL prefix — API wants raw base64
       const base64 = result.split(",")[1];
-      onImageSelected(base64, mediaType);
+      onImageSelected(base64, mediaType, result);
     };
     reader.readAsDataURL(file);
   };
