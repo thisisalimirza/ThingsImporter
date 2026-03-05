@@ -105,6 +105,7 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
   const [exporting, setExporting] = useState(false);
   const [sent, setSent] = useState(false);
   const [sentTo, setSentTo] = useState<Destination>("things");
+  const [remindersViaShare, setRemindersViaShare] = useState(false);
   const [copied, setCopied] = useState(false);
   const [exportError, setExportError] = useState("");
 
@@ -187,8 +188,33 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
     setSent(true);
   };
 
-  const exportReminders = () => {
-    downloadICS(tasks);
+  const exportReminders = async () => {
+    const icsContent = generateICS(tasks);
+    const blob = new Blob([icsContent], { type: "text/calendar" });
+    const file = new File([blob], "tasks.ics", { type: "text/calendar" });
+
+    // Web Share API: works natively on iOS Safari (opens share sheet → user picks Reminders)
+    if (typeof navigator.share === "function" && navigator.canShare?.({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: "Tasks" });
+        setRemindersViaShare(true);
+        setSentTo("reminders");
+        setSent(true);
+        return;
+      } catch (err) {
+        if ((err as Error).name === "AbortError") return; // user cancelled share sheet
+        // fall through to download
+      }
+    }
+
+    // Fallback for desktop: trigger file download
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "tasks.ics";
+    a.click();
+    URL.revokeObjectURL(url);
+    setRemindersViaShare(false);
     setSentTo("reminders");
     setSent(true);
   };
@@ -242,7 +268,9 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
           </div>
           <div>
             <p className="text-white text-xl font-semibold">
-              {isReminders ? "File downloaded!" : `${tasks.length} task${tasks.length !== 1 ? "s" : ""} sent!`}
+              {isReminders
+                ? remindersViaShare ? "Sent to Apple Reminders!" : "File downloaded!"
+                : `${tasks.length} task${tasks.length !== 1 ? "s" : ""} sent!`}
             </p>
             {totalSubtasks > 0 && !isReminders && (
               <p className="text-gray-400 text-sm mt-0.5">with {totalSubtasks} subtask{totalSubtasks !== 1 ? "s" : ""}</p>
@@ -250,13 +278,13 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
           </div>
         </div>
 
-        {/* Apple Reminders post-download instructions */}
-        {isReminders && (
+        {/* Apple Reminders post-export instructions */}
+        {isReminders && !remindersViaShare && (
           <div className="bg-gray-800 rounded-2xl p-4 flex flex-col gap-3">
-            <p className="text-white font-semibold text-sm">Now import into Reminders:</p>
-            <Step n={1}>Look for a download notification at the top of your screen, or open the <strong className="text-white">Files app</strong> and find <strong className="text-white">tasks.ics</strong> in your Downloads folder.</Step>
-            <Step n={2}>Tap the file. Your iPhone will automatically ask <strong className="text-white">&ldquo;Add to Reminders?&rdquo;</strong></Step>
-            <Step n={3}>Tap <strong className="text-white">Add</strong>. That&rsquo;s it — your tasks are now in Reminders! 🎉</Step>
+            <p className="text-white font-semibold text-sm">Now import into Apple Reminders:</p>
+            <Step n={1}>Find the downloaded file — open your <strong className="text-white">Files app</strong> and look in the <strong className="text-white">Downloads</strong> folder for <strong className="text-white">tasks.ics</strong></Step>
+            <Step n={2}>Tap the file. Your iPhone will ask <strong className="text-white">&ldquo;Add to Reminders?&rdquo;</strong> — tap <strong className="text-white">Add</strong></Step>
+            <Step n={3}>Done! Open <strong className="text-white">Apple Reminders</strong> and your tasks will be there.</Step>
           </div>
         )}
 
@@ -425,10 +453,10 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
         {/* Apple Reminders — info */}
         {destination === "reminders" && (
           <div className="bg-gray-800 rounded-2xl p-4 flex flex-col gap-3">
-            <p className="text-white text-sm font-semibold">How this works</p>
-            <Step n={1}>Tap <strong className="text-white">&ldquo;Export to Reminders&rdquo;</strong> below — it downloads a small file called <strong className="text-white">tasks.ics</strong></Step>
-            <Step n={2}>Find the file in your <strong className="text-white">Files app</strong> (Downloads folder) and tap it</Step>
-            <Step n={3}>Your iPhone will ask <strong className="text-white">&ldquo;Add to Reminders?&rdquo;</strong> — tap <strong className="text-white">Add</strong> and you&rsquo;re done!</Step>
+            <p className="text-white text-sm font-semibold">Sends to Apple Reminders</p>
+            <Step n={1}>Tap <strong className="text-white">&ldquo;Send to Apple Reminders&rdquo;</strong> below</Step>
+            <Step n={2}><strong className="text-white">On iPhone:</strong> your share sheet opens — scroll down and tap <strong className="text-white">Reminders</strong> (the red icon). If you don&rsquo;t see it, tap <strong className="text-white">More</strong> first.</Step>
+            <Step n={3}><strong className="text-white">On desktop:</strong> a <strong className="text-white">tasks.ics</strong> file will download — open it and your calendar or tasks app will offer to import it.</Step>
           </div>
         )}
 
@@ -505,7 +533,7 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
           >
             {exporting ? "Sending…" : {
               things: "Add All to Things 3",
-              reminders: "Export to Reminders",
+              reminders: "Send to Apple Reminders",
               todoist: todoistToken ? "Add All to Todoist" : "Connect Todoist First",
               copy: "Copy to Clipboard",
             }[destination]}
