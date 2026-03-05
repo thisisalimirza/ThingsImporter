@@ -32,13 +32,13 @@ export default function TaskList({ tasks, onTasksChange, onReset }: TaskListProp
     setEditValue("");
   };
 
-  const addToThings = async () => {
-    for (let i = 0; i < tasks.length; i++) {
-      const url = `things:///add?title=${encodeURIComponent(tasks[i])}`;
-      window.location.href = url;
-      // Small delay so Things 3 can process each task
-      await new Promise((resolve) => setTimeout(resolve, 400));
-    }
+  const addToThings = () => {
+    const data = tasks.map((title) => ({
+      type: "to-do",
+      attributes: { title },
+    }));
+    const url = `things:///json?data=${encodeURIComponent(JSON.stringify(data))}`;
+    window.location.href = url;
   };
 
   if (tasks.length === 0) {
