@@ -76,7 +76,7 @@ export default function AudioCapture({ onTranscript }: AudioCaptureProps) {
 
   if (!supported) {
     return (
-      <div className="bg-gray-800 border border-gray-700/60 rounded-2xl px-4 py-6 text-center text-gray-500 text-sm">
+      <div className="bg-stone-900 border border-stone-800/80 rounded-2xl px-4 py-6 text-center text-stone-500 text-sm">
         Voice input isn&apos;t supported in this browser. Try Safari on iPhone or Chrome.
       </div>
     );
@@ -89,29 +89,29 @@ export default function AudioCapture({ onTranscript }: AudioCaptureProps) {
         onClick={() => setSmartBreakdown((v) => !v)}
         className={`flex items-start gap-3 w-full text-left rounded-2xl px-4 py-4 transition-all border ${
           smartBreakdown
-            ? "bg-purple-900/40 border-purple-600"
-            : "bg-gray-800 border-transparent"
+            ? "bg-amber-400/8 border-amber-400/30"
+            : "bg-stone-900 border-stone-800/80"
         }`}
       >
-        {/* Custom toggle pill */}
+        {/* Toggle pill */}
         <div className="mt-0.5 flex-shrink-0">
           <div
             className={`w-10 h-6 rounded-full flex items-center transition-colors ${
-              smartBreakdown ? "bg-purple-500" : "bg-gray-600"
+              smartBreakdown ? "bg-amber-400" : "bg-stone-700"
             }`}
           >
             <div
-              className={`w-4 h-4 rounded-full bg-white mx-1 transition-transform ${
+              className={`w-4 h-4 rounded-full bg-white mx-1 transition-transform shadow-sm ${
                 smartBreakdown ? "translate-x-4" : "translate-x-0"
               }`}
             />
           </div>
         </div>
         <div>
-          <p className={`font-medium text-sm ${smartBreakdown ? "text-purple-300" : "text-gray-200"}`}>
+          <p className={`font-medium text-sm ${smartBreakdown ? "text-amber-300" : "text-stone-200"}`}>
             Smart Breakdown
           </p>
-          <p className="text-gray-400 text-xs mt-0.5 leading-relaxed">
+          <p className="text-stone-500 text-xs mt-0.5 leading-relaxed font-light">
             AI suggests prerequisite steps for big tasks — so you always know the minimum next action
           </p>
         </div>
@@ -120,10 +120,10 @@ export default function AudioCapture({ onTranscript }: AudioCaptureProps) {
       {/* Record button */}
       <button
         onClick={toggleRecording}
-        className={`flex items-center justify-center gap-3 w-full py-5 rounded-2xl text-white text-xl font-semibold active:scale-95 transition-all ${
+        className={`btn-amber flex items-center justify-center gap-3 w-full py-5 rounded-2xl text-xl font-semibold ${
           recording
-            ? "bg-red-500 shadow-lg shadow-red-500/30"
-            : "bg-indigo-500 shadow-lg shadow-indigo-500/25"
+            ? "bg-red-500 shadow-lg shadow-red-500/20 text-white"
+            : "bg-amber-400 shadow-lg shadow-amber-400/10 text-stone-950"
         }`}
       >
         {recording ? (
@@ -137,7 +137,7 @@ export default function AudioCapture({ onTranscript }: AudioCaptureProps) {
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="currentColor"
-              className="w-7 h-7"
+              className="w-6 h-6"
             >
               <path d="M8.25 4.5a3.75 3.75 0 1 1 7.5 0v8.25a3.75 3.75 0 1 1-7.5 0V4.5Z" />
               <path d="M6 10.5a.75.75 0 0 1 .75.75v1.5a5.25 5.25 0 1 0 10.5 0v-1.5a.75.75 0 0 1 1.5 0v1.5a6.751 6.751 0 0 1-6 6.709v2.291h3a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5h3v-2.291a6.751 6.751 0 0 1-6-6.709v-1.5A.75.75 0 0 1 6 10.5Z" />
@@ -149,17 +149,17 @@ export default function AudioCapture({ onTranscript }: AudioCaptureProps) {
 
       {/* Transcript display */}
       {(transcript || interimText) && (
-        <div className="bg-gray-800 border border-gray-700/60 rounded-2xl px-4 py-4 min-h-[80px]">
-          <p className="text-sm text-gray-400 mb-2">Transcript</p>
-          <p className="text-white text-base leading-relaxed">
+        <div className="bg-stone-900 border border-stone-800/80 rounded-2xl px-4 py-4 min-h-[80px]">
+          <p className="text-xs text-stone-600 mb-2 uppercase tracking-wider font-medium">Transcript</p>
+          <p className="text-stone-200 text-base leading-relaxed">
             {transcript}
-            {interimText && <span className="text-gray-500">{interimText}</span>}
+            {interimText && <span className="text-stone-600">{interimText}</span>}
           </p>
         </div>
       )}
 
       {!recording && !transcript && (
-        <p className="text-gray-500 text-sm text-center">
+        <p className="text-stone-600 text-sm text-center font-light">
           Dictate your tasks — e.g. &ldquo;Call dentist tomorrow, finish the quarterly report by Friday&rdquo;
         </p>
       )}
@@ -167,7 +167,7 @@ export default function AudioCapture({ onTranscript }: AudioCaptureProps) {
       {transcript && !recording && (
         <button
           onClick={handleSubmit}
-          className="w-full py-4 bg-indigo-500 hover:bg-indigo-400 active:scale-95 transition-all text-white text-lg font-semibold rounded-2xl shadow-lg shadow-indigo-500/25"
+          className="btn-amber w-full py-4 bg-amber-400 hover:bg-amber-300 text-stone-950 text-lg font-semibold rounded-2xl shadow-lg shadow-amber-400/10"
         >
           Extract Tasks
         </button>

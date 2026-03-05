@@ -1,8 +1,19 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Instrument_Serif, DM_Sans } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-display",
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  weight: ["300", "400", "500", "600"],
+});
 
 export const metadata: Metadata = {
   title: "BetterTasks",
@@ -21,7 +32,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
-  themeColor: "#111827",
+  themeColor: "#0c0a09",
 };
 
 export default function RootLayout({
@@ -34,7 +45,7 @@ export default function RootLayout({
       <head>
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
-      <body className={`${inter.className} bg-gray-900 antialiased`}>
+      <body className={`${instrumentSerif.variable} ${dmSans.variable} antialiased`}>
         {children}
       </body>
     </html>
