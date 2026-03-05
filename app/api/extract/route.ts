@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     if (typeof body.text === "string") {
       const text = body.text.trim();
       if (!text) return NextResponse.json({ error: "Empty transcript" }, { status: 400 });
-      const tasks = await extractTasksFromText(text);
+      const tasks = await extractTasksFromText(text, body.smartBreakdown === true);
       return NextResponse.json({ tasks });
     }
 

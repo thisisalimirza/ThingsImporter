@@ -47,9 +47,12 @@ export default function Home() {
     runExtraction({ image: base64, mediaType }, "Claude is reading your journal");
   };
 
-  const handleVoiceTranscript = (text: string) => {
+  const handleVoiceTranscript = (text: string, smartBreakdown: boolean) => {
     setImagePreview(null);
-    runExtraction({ text }, "Claude is extracting your tasks");
+    runExtraction(
+      { text, smartBreakdown },
+      smartBreakdown ? "Claude is breaking down your tasks" : "Claude is extracting your tasks"
+    );
   };
 
   const handleReset = () => {

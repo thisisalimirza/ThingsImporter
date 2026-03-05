@@ -3,26 +3,26 @@
 import { useState, useRef, useEffect } from "react";
 
 interface AudioCaptureProps {
-  onTranscript: (text: string) => void;
+  onTranscript: (text: string, smartBreakdown: boolean) => void;
 }
 
-// Extend window for webkit prefix
-declare global {
-  interface Window {
-    SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof SpeechRecognition;
-  }
-}
+// Web Speech API isn't in all TS DOM libs — cast via any at call sites
+type SpeechRecognitionCtor = new () => SpeechRecognition;
+
 
 export default function AudioCapture({ onTranscript }: AudioCaptureProps) {
   const [supported, setSupported] = useState(true);
   const [recording, setRecording] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [interimText, setInterimText] = useState("");
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const [smartBreakdown, setSmartBreakdown] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
-    const SR = window.SpeechRecognition ?? window.webkitSpeechRecognition;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const w = window as any;
+    const SR: SpeechRecognitionCtor | undefined = w.SpeechRecognition ?? w.webkitSpeechRecognition;
     if (!SR) {
       setSupported(false);
       return;
@@ -73,7 +73,7 @@ export default function AudioCapture({ onTranscript }: AudioCaptureProps) {
 
   const handleSubmit = () => {
     const full = transcript.trim();
-    if (full) onTranscript(full);
+    if (full) onTranscript(full, smartBreakdown);
   };
 
   if (!supported) {
@@ -86,6 +86,39 @@ export default function AudioCapture({ onTranscript }: AudioCaptureProps) {
 
   return (
     <div className="flex flex-col gap-4">
+      {/* Smart Breakdown toggle */}
+      <button
+        onClick={() => setSmartBreakdown((v) => !v)}
+        className={`flex items-start gap-3 w-full text-left rounded-2xl px-4 py-4 transition-all border ${
+          smartBreakdown
+            ? "bg-purple-900/40 border-purple-600"
+            : "bg-gray-800 border-transparent"
+        }`}
+      >
+        {/* Custom toggle pill */}
+        <div className="mt-0.5 flex-shrink-0">
+          <div
+            className={`w-10 h-6 rounded-full flex items-center transition-colors ${
+              smartBreakdown ? "bg-purple-500" : "bg-gray-600"
+            }`}
+          >
+            <div
+              className={`w-4 h-4 rounded-full bg-white mx-1 transition-transform ${
+                smartBreakdown ? "translate-x-4" : "translate-x-0"
+              }`}
+            />
+          </div>
+        </div>
+        <div>
+          <p className={`font-medium text-sm ${smartBreakdown ? "text-purple-300" : "text-gray-200"}`}>
+            Smart Breakdown
+          </p>
+          <p className="text-gray-400 text-xs mt-0.5 leading-relaxed">
+            AI suggests prerequisite steps for big tasks — so you always know the minimum next action
+          </p>
+        </div>
+      </button>
+
       {/* Record button */}
       <button
         onClick={toggleRecording}
@@ -122,21 +155,17 @@ export default function AudioCapture({ onTranscript }: AudioCaptureProps) {
           <p className="text-sm text-gray-400 mb-2">Transcript</p>
           <p className="text-white text-base leading-relaxed">
             {transcript}
-            {interimText && (
-              <span className="text-gray-500">{interimText}</span>
-            )}
+            {interimText && <span className="text-gray-500">{interimText}</span>}
           </p>
         </div>
       )}
 
-      {/* Hint */}
       {!recording && !transcript && (
         <p className="text-gray-500 text-sm text-center">
-          Dictate your tasks naturally — e.g. &ldquo;Call dentist tomorrow, review the report by Friday&rdquo;
+          Dictate your tasks — e.g. &ldquo;Call dentist tomorrow, finish the quarterly report by Friday&rdquo;
         </p>
       )}
 
-      {/* Submit */}
       {transcript && !recording && (
         <button
           onClick={handleSubmit}
